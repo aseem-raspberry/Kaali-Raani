@@ -551,8 +551,7 @@ function renderHand(gameState) {
             cardEl.classList.add('disabled');
         }
 
-        // Add dealing animation
-        cardEl.classList.add('dealing');
+        // No dealing animation logic needed anymore
         cardEl.style.animationDelay = `${index * 0.05}s`;
 
         // Click handler for playing cards

@@ -181,15 +181,15 @@
     <div id="trump-panel"
       class="hidden fixed bottom-32 left-1/2 -translate-x-1/2 bg-slate-800/95 backdrop-blur-md rounded-xl p-4 border border-purple-500/30 shadow-2xl z-30">
       <div class="text-center mb-3 text-purple-400 font-semibold">Select Trump Suit</div>
-      <div class="flex gap-3">
+      <div class="flex gap-3 justify-center">
         <button data-suit="spades"
-          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl transition hover:scale-110">♠</button>
+          class="trump-btn w-16 h-16 rounded-xl bg-white hover:bg-gray-100 border-2 border-slate-300 flex items-center justify-center text-4xl text-slate-800 shadow-md transition transform active:scale-95">♠</button>
         <button data-suit="hearts"
-          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl text-red-500 transition hover:scale-110">♥</button>
+          class="trump-btn w-16 h-16 rounded-xl bg-white hover:bg-gray-100 border-2 border-red-200 flex items-center justify-center text-4xl text-red-500 shadow-md transition transform active:scale-95">♥</button>
         <button data-suit="diamonds"
-          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl text-red-500 transition hover:scale-110">♦</button>
+          class="trump-btn w-16 h-16 rounded-xl bg-white hover:bg-gray-100 border-2 border-red-200 flex items-center justify-center text-4xl text-red-500 shadow-md transition transform active:scale-95">♦</button>
         <button data-suit="clubs"
-          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl transition hover:scale-110">♣</button>
+          class="trump-btn w-16 h-16 rounded-xl bg-white hover:bg-gray-100 border-2 border-slate-300 flex items-center justify-center text-4xl text-slate-800 shadow-md transition transform active:scale-95">♣</button>
       </div>
     </div>
 
@@ -198,13 +198,13 @@
       class="hidden fixed bottom-32 left-1/2 -translate-x-1/2 bg-slate-800/95 backdrop-blur-md rounded-xl p-4 border border-purple-500/30 shadow-2xl z-30 max-w-lg">
       <div class="text-center mb-3 text-purple-400 font-semibold">Select Partner Card</div>
       <div class="mb-3 flex gap-2">
-        <select id="partner-suit" class="flex-1 px-3 py-2 bg-slate-700 rounded-lg border border-slate-600">
-          <option value="spades">♠ Spades</option>
-          <option value="hearts">♥ Hearts</option>
-          <option value="diamonds">♦ Diamonds</option>
-          <option value="clubs">♣ Clubs</option>
+        <select id="partner-suit" class="flex-1 px-3 py-2 bg-white text-slate-800 font-bold rounded-lg border-2 border-slate-300 focus:outline-none focus:border-purple-500">
+          <option value="spades" class="text-slate-800 font-bold">♠ Spades</option>
+          <option value="hearts" class="text-red-500 font-bold">♥ Hearts</option>
+          <option value="diamonds" class="text-red-500 font-bold">♦ Diamonds</option>
+          <option value="clubs" class="text-slate-800 font-bold">♣ Clubs</option>
         </select>
-        <select id="partner-rank" class="flex-1 px-3 py-2 bg-slate-700 rounded-lg border border-slate-600">
+        <select id="partner-rank" class="flex-1 px-3 py-2 bg-white text-slate-800 font-bold rounded-lg border-2 border-slate-300 focus:outline-none focus:border-purple-500">
           <option value="A">Ace</option>
           <option value="K">King</option>
           <option value="Q">Queen</option>
