@@ -618,19 +618,6 @@ function renderOtherPlayers(gameState) {
       ${gameState.rajaId === player.id ? '<span class="points-badge">👑 Raja</span>' : ''}
     `;
 
-        // Show their played card in current trick (or completed trick during delay if no new trick)
-        let trickSource = gameState.currentTrick;
-        if (pendingTrickClear && savedCompletedTrick && (!gameState.currentTrick || gameState.currentTrick.length === 0)) {
-            trickSource = savedCompletedTrick;
-        }
-
-        const playedCard = trickSource.find(t => t.playerId === player.id);
-        if (playedCard) {
-            const cardEl = createCardElement(playedCard.card);
-            cardEl.classList.add('trick-card', 'player-played-card');
-            playerEl.appendChild(cardEl);
-        }
-
         otherPlayersContainer.appendChild(playerEl);
         positionIndex++;
     });
