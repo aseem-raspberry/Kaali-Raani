@@ -595,8 +595,8 @@ function renderTablePlayers(gameState) {
             playerEl.classList.add('partner');
         }
 
-        // Position around the table
-        const radius = 42; // percentage from center
+        // Position around the table - use smaller radius on mobile
+        const radius = window.innerWidth <= 430 ? 38 : 42;
         const x = 50 + radius * Math.sin(angle);
         const y = 50 - radius * Math.cos(angle);
 

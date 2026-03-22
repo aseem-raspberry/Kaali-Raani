@@ -225,7 +225,7 @@
 .suit-spades::before { content: '♠'; color: #ffffff; }
 .suit-clubs::before { content: '♣'; color: #ffffff; }
 
-/* Responsive adjustments */
+/* Responsive adjustments - Tablets */
 @media (max-width: 768px) {
   .card {
     width: 48px;
@@ -255,6 +255,77 @@
     width: 140px;
     font-size: 0.75rem;
     padding: 12px;
+  }
+}
+
+/* Responsive adjustments - Phones */
+@media (max-width: 430px) {
+  .card {
+    width: 40px;
+    height: 56px;
+  }
+  
+  .card .rank {
+    font-size: 0.85rem;
+  }
+  
+  .card .suit {
+    font-size: 1rem;
+  }
+  
+  .trick-card {
+    width: 32px;
+    height: 45px;
+  }
+  
+  .trick-card .rank {
+    font-size: 0.75rem;
+  }
+  
+  .trick-card .suit {
+    font-size: 0.85rem;
+  }
+  
+  .player-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+    border-width: 2px;
+  }
+  
+  .player-name {
+    font-size: 0.6rem;
+    max-width: 60px;
+  }
+  
+  .player-card-count {
+    font-size: 0.55rem;
+  }
+  
+  #my-hand .card {
+    margin-left: -20px;
+  }
+  
+  #my-hand .card:first-child {
+    margin-left: 0;
+  }
+
+  /* Reposition action panels above hand */
+  #bidding-panel,
+  #trump-panel,
+  #partner-panel {
+    bottom: 5.5rem !important;
+    max-width: calc(100vw - 2rem);
+    padding: 0.75rem;
+  }
+
+  .passed-badge {
+    font-size: 0.5rem;
+    padding: 1px 4px;
+  }
+
+  .points-badge {
+    font-size: 0.55rem;
   }
 }
 
