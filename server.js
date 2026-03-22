@@ -506,17 +506,15 @@ function calculateFinalScores(room) {
 function getGameStateForPlayer(room, playerId) {
     const player = room.players.get(playerId);
 
-    const otherPlayers = [];
+    const allPlayersInfo = [];
     for (const [id, p] of room.players) {
-        if (id !== playerId) {
-            otherPlayers.push({
-                id: p.id,
-                name: p.name,
-                cardCount: p.hand.length,
-                connected: p.connected,
-                hasPassed: room.passedPlayers.has(id)
-            });
-        }
+        allPlayersInfo.push({
+            id: p.id,
+            name: p.name,
+            cardCount: p.hand.length,
+            connected: p.connected,
+            hasPassed: room.passedPlayers.has(id)
+        });
     }
 
     // Calculate all players' points

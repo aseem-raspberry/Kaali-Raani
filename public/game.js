@@ -427,11 +427,11 @@ function updateGameState(gameState) {
     // Render hand
     renderHand(gameState);
 
-    // Render my score on table (near hand)
+    // Render my score on table (near hand, using the badge)
     renderMyScore(gameState);
 
-    // Render other players (with their scores)
-    renderOtherPlayers(gameState);
+    // Render all players around the table
+    renderTablePlayers(gameState);
 
     // Render current trick
     // If a new trick has started (currentTrick has cards), cancel the delay from previous trick immediately
@@ -566,23 +566,20 @@ function renderHand(gameState) {
     });
 }
 
-function renderOtherPlayers(gameState) {
+function renderTablePlayers(gameState) {
     otherPlayersContainer.innerHTML = '';
 
     const playerOrder = gameState.playerOrder;
     const myIndex = playerOrder.findIndex(p => p.id === state.playerId);
-    const otherCount = playerOrder.length - 1;
+    const totalCount = playerOrder.length;
 
-    // Position other players around the table
-    let positionIndex = 0;
+    // Position all players around the table
     playerOrder.forEach((player, index) => {
-        if (player.id === state.playerId) return;
+        const relativeIndex = (index - myIndex + totalCount) % totalCount;
+        const angle = getPlayerAngle(relativeIndex, totalCount);
 
-        const relativeIndex = (index - myIndex - 1 + playerOrder.length) % playerOrder.length;
-        const angle = getPlayerAngle(relativeIndex, otherCount);
-
-        const otherPlayer = gameState.otherPlayers.find(p => p.id === player.id);
-        if (!otherPlayer) return;
+        const playerInfo = gameState.allPlayersInfo.find(p => p.id === player.id);
+        if (!playerInfo) return;
 
         const playerEl = document.createElement('div');
         playerEl.className = 'player-position';
@@ -609,28 +606,27 @@ function renderOtherPlayers(gameState) {
 
         playerEl.innerHTML = `
       <div class="player-avatar">${player.name.charAt(0).toUpperCase()}</div>
-      <div class="player-name">${escapeHtml(player.name)}</div>
+      <div class="player-name">${escapeHtml(player.name)}${player.id === state.playerId ? ' (You)' : ''}</div>
       <div class="text-xs font-bold ${gameState.rajaId === player.id || (gameState.partnerRevealed && gameState.partnerId === player.id) ? 'text-purple-400' : 'text-emerald-400'}">
         ${gameState.allPlayersPoints[player.id]?.points || 0} pts
       </div>
-      <div class="player-card-count">${otherPlayer.cardCount} cards</div>
-      ${otherPlayer.hasPassed && gameState.phase === 'bidding' ? '<span class="passed-badge">PASS</span>' : ''}
+      <div class="player-card-count">${player.id === state.playerId ? state.myHand.length : playerInfo.cardCount} cards</div>
+      ${playerInfo.hasPassed && gameState.phase === 'bidding' ? '<span class="passed-badge">PASS</span>' : ''}
       ${gameState.rajaId === player.id ? '<span class="points-badge">👑 Raja</span>' : ''}
     `;
 
         otherPlayersContainer.appendChild(playerEl);
-        positionIndex++;
     });
 }
 
-function getPlayerAngle(index, totalOthers) {
-    // Distribute players evenly around the top half of the table
-    const spread = Math.PI; // 180 degrees
-    const startAngle = -spread / 2;
-
-    if (totalOthers === 1) return 0; // Top center
-
-    return startAngle + (index / (totalOthers - 1)) * spread;
+function getPlayerAngle(relativeIndex, totalPlayers) {
+    // Distribute all players around the full circle
+    // Put "me" (relativeIndex === 0) at the bottom (Math.PI)
+    const spread = Math.PI * 2; // Full circle
+    const startAngle = Math.PI; // Bottom
+    
+    // Reverse direction (clockwise or counterclockwise) if preferred, usually deals go clockwise
+    return startAngle + (relativeIndex / totalPlayers) * spread;
 }
 
 function renderTrick(trick) {
