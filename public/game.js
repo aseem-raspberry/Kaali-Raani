@@ -42,6 +42,7 @@ const roomCodeInput = document.getElementById('room-code');
 const joinRoomBtn = document.getElementById('join-room-btn');
 const backBtn = document.getElementById('back-btn');
 const errorMessage = document.getElementById('error-message');
+const roomSelect = document.getElementById('room-select');
 
 // Waiting room elements
 const displayRoomCode = document.getElementById('display-room-code');
@@ -121,7 +122,12 @@ createRoomBtn.addEventListener('click', () => {
 
 joinRoomBtn.addEventListener('click', () => {
     const name = playerNameInput.value.trim();
-    const roomId = roomCodeInput.value.trim().toUpperCase();
+    let roomId = roomCodeInput.value.trim().toUpperCase();
+
+    // Use dropdown value if selected and manual input is empty
+    if (!roomId && roomSelect.value) {
+        roomId = roomSelect.value;
+    }
 
     if (!name) {
         showError('Please enter your name');
@@ -142,6 +148,19 @@ playerNameInput.addEventListener('keypress', (e) => {
 
 roomCodeInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') joinRoomBtn.click();
+});
+
+// Mutual exclusion between dropdown and manual code
+roomSelect.addEventListener('change', () => {
+    if (roomSelect.value !== '') {
+        roomCodeInput.value = '';
+    }
+});
+
+roomCodeInput.addEventListener('input', () => {
+    if (roomCodeInput.value.trim() !== '') {
+        roomSelect.value = '';
+    }
 });
 
 // ============ WAITING ROOM HANDLERS ============
@@ -200,6 +219,27 @@ document.getElementById('new-game-btn').addEventListener('click', () => {
 });
 
 // ============ SOCKET HANDLERS ============
+
+socket.on('availableRoomsUpdate', (availableRooms) => {
+    // Keep the default option
+    roomSelect.innerHTML = '<option value="">-- Select an active room --</option>';
+    
+    if (availableRooms.length === 0) {
+        const option = document.createElement('option');
+        option.value = "";
+        option.textContent = "No active rooms found";
+        option.disabled = true;
+        roomSelect.appendChild(option);
+        return;
+    }
+
+    availableRooms.forEach(room => {
+        const option = document.createElement('option');
+        option.value = room.id;
+        option.textContent = `${room.hostName}'s Room (${room.playerCount}/6) - [${room.id}]`;
+        roomSelect.appendChild(option);
+    });
+});
 
 socket.on('roomCreated', ({ roomId, playerId, isHost }) => {
     state.playerId = playerId;

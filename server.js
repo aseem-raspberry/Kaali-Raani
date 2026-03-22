@@ -64,6 +64,23 @@ function createRoom(hostId, hostName) {
 }
 
 /**
+ * Get list of available rooms
+ */
+function getAvailableRooms() {
+    const available = [];
+    for (const [roomId, room] of rooms.entries()) {
+        if (room.phase === PHASES.WAITING && room.players.size < 6) {
+            available.push({
+                id: roomId,
+                hostName: room.players.get(room.hostId)?.name || 'Unknown',
+                playerCount: room.players.size
+            });
+        }
+    }
+    return available;
+}
+
+/**
  * Add player to room
  */
 function addPlayerToRoom(room, playerId, playerName, socketId) {
@@ -557,6 +574,9 @@ function getGameStateForPlayer(room, playerId) {
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    // Send initial list of available rooms
+    socket.emit('availableRoomsUpdate', getAvailableRooms());
+
     let currentRoom = null;
     let currentPlayerId = null;
 
@@ -582,6 +602,8 @@ io.on('connection', (socket) => {
                     isHost: p.id === room.hostId
                 }))
             });
+            // Update all lobby clients
+            io.emit('availableRoomsUpdate', getAvailableRooms());
         } else {
             socket.emit('error', { message: result.error });
         }
@@ -615,6 +637,8 @@ io.on('connection', (socket) => {
                     isHost: p.id === room.hostId
                 }))
             });
+            // Update all lobby clients
+            io.emit('availableRoomsUpdate', getAvailableRooms());
         } else {
             socket.emit('error', { message: result.error });
         }
@@ -637,6 +661,8 @@ io.on('connection', (socket) => {
             for (const [playerId, player] of room.players) {
                 io.to(player.socketId).emit('gameStarted', getGameStateForPlayer(room, playerId));
             }
+            // Update all clients since room is no longer waiting
+            io.emit('availableRoomsUpdate', getAvailableRooms());
         } else {
             socket.emit('error', { message: result.error });
         }
@@ -794,6 +820,30 @@ io.on('connection', (socket) => {
                         playerId: currentPlayerId,
                         playerName: player.name
                     });
+
+                    // Remove player from lobby count if room is still waiting
+                    if (room.phase === PHASES.WAITING) {
+                        room.players.delete(currentPlayerId);
+                        
+                        // If room is empty, remove it
+                        if (room.players.size === 0) {
+                            rooms.delete(currentRoom);
+                        } else if (currentPlayerId === room.hostId) {
+                            // If host leaves, make next player the host
+                            const nextHostId = Array.from(room.players.keys())[0];
+                            room.hostId = nextHostId;
+                            io.to(room.id).emit('playerJoined', {
+                                players: Array.from(room.players.values()).map(p => ({
+                                    id: p.id,
+                                    name: p.name,
+                                    isHost: p.id === room.hostId
+                                }))
+                            });
+                        }
+                        
+                        // Update all clients
+                        io.emit('availableRoomsUpdate', getAvailableRooms());
+                    }
                 }
             }
         }
