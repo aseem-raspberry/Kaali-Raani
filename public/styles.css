@@ -1,0 +1,306 @@
+/* Kaali Rani - Custom Styles */
+
+/* Card Styles */
+.card {
+  width: 60px;
+  height: 84px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  user-select: none;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.card.selected {
+  transform: translateY(-20px);
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.6);
+  border: 2px solid #8b5cf6;
+}
+
+.card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card.disabled:hover {
+  transform: none;
+}
+
+.card .rank {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.card .suit {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.card.hearts, .card.diamonds {
+  color: #ef4444;
+}
+
+.card.spades, .card.clubs {
+  color: #1e293b;
+}
+
+/* Special styling for Queen of Spades (Kaali Rani) */
+.card.kaali-rani {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+  color: #fbbf24;
+  border: 2px solid #fbbf24;
+}
+
+.card.kaali-rani .suit {
+  color: #fbbf24;
+}
+
+/* Trick Cards (smaller, in center) */
+.trick-card {
+  width: 50px;
+  height: 70px;
+  font-size: 0.9rem;
+}
+
+.trick-card .rank {
+  font-size: 1rem;
+}
+
+.trick-card .suit {
+  font-size: 1.1rem;
+}
+
+/* Player Position Styles */
+.player-position {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.player-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+  border: 3px solid #475569;
+  transition: all 0.3s ease;
+}
+
+.player-position.current-turn .player-avatar {
+  border-color: #fbbf24;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+  animation: pulse-glow 1.5s infinite;
+}
+
+.player-position.raja .player-avatar {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #581c87 0%, #3b0764 100%);
+}
+
+.player-position.partner .player-avatar {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+}
+
+.player-name {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-card-count {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+.player-played-card {
+  position: absolute;
+  transform: translate(-50%, 100%) scale(0.8);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.8);
+  }
+}
+
+/* Animations */
+@keyframes card-deal {
+  from {
+    opacity: 0;
+    transform: translateY(-100px) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+.card.dealing {
+  animation: card-deal 0.3s ease-out forwards;
+}
+
+@keyframes card-play {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-150px);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Notification Animation */
+.notification-show {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Waiting Room Player Item */
+.player-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(51, 65, 85, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.player-item.host {
+  border-color: rgba(251, 191, 36, 0.5);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.player-item .avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Suit symbols in trump display */
+.suit-hearts::before { content: '♥'; color: #ef4444; }
+.suit-diamonds::before { content: '♦'; color: #ef4444; }
+.suit-spades::before { content: '♠'; color: #ffffff; }
+.suit-clubs::before { content: '♣'; color: #ffffff; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    width: 48px;
+    height: 68px;
+  }
+  
+  .card .rank {
+    font-size: 1rem;
+  }
+  
+  .card .suit {
+    font-size: 1.2rem;
+  }
+  
+  .trick-card {
+    width: 40px;
+    height: 56px;
+  }
+  
+  .player-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  #scorecard {
+    width: 140px;
+    font-size: 0.75rem;
+    padding: 12px;
+  }
+}
+
+/* Card fan effect in hand */
+#my-hand .card {
+  margin-left: -15px;
+}
+
+#my-hand .card:first-child {
+  margin-left: 0;
+}
+
+/* Trick complete animation */
+@keyframes trick-win {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1) translateY(-10px);
+    opacity: 0;
+  }
+}
+
+.trick-complete {
+  animation: trick-win 0.5s ease-out forwards;
+}
+
+/* Pass badge */
+.passed-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+/* Points indicator */
+.points-badge {
+  font-size: 0.65rem;
+  color: #fbbf24;
+  font-weight: bold;
+}

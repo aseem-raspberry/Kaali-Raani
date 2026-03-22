@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaali Rani - Black Queen Card Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1e293b',
+            secondary: '#334155',
+            accent: '#8b5cf6',
+            gold: '#fbbf24',
+            emerald: '#10b981'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+
+  <!-- Lobby View -->
+  <div id="lobby-view" class="min-h-screen flex items-center justify-center p-4">
+    <div
+      class="bg-slate-800/80 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md w-full border border-purple-500/20">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+          ♠ Kaali Rani ♠
+        </h1>
+        <p class="text-slate-400">Black Queen - A Trick-Taking Card Game</p>
+      </div>
+
+      <div id="name-section" class="space-y-4">
+        <input type="text" id="player-name" placeholder="Enter your name"
+          class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition"
+          maxlength="20">
+
+        <div class="grid grid-cols-2 gap-3">
+          <button id="create-room-btn"
+            class="px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-semibold transition transform hover:scale-105 shadow-lg">
+            Create Room
+          </button>
+          <button id="join-section-btn"
+            class="px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg font-semibold transition">
+            Join Room
+          </button>
+        </div>
+      </div>
+
+      <div id="join-section" class="hidden space-y-4">
+        <input type="text" id="room-code" placeholder="Enter Room Code"
+          class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition uppercase tracking-widest text-center text-xl"
+          maxlength="6">
+        <div class="grid grid-cols-2 gap-3">
+          <button id="back-btn"
+            class="px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg font-semibold transition">
+            ← Back
+          </button>
+          <button id="join-room-btn"
+            class="px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-lg font-semibold transition transform hover:scale-105 shadow-lg">
+            Join
+          </button>
+        </div>
+      </div>
+
+      <div id="error-message"
+        class="hidden mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-center"></div>
+    </div>
+  </div>
+
+  <!-- Waiting Room View -->
+  <div id="waiting-view" class="hidden min-h-screen flex items-center justify-center p-4">
+    <div
+      class="bg-slate-800/80 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-lg w-full border border-purple-500/20">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-purple-400 mb-2">Waiting Room</h2>
+        <div class="flex items-center justify-center gap-2">
+          <span class="text-slate-400">Room Code:</span>
+          <span id="display-room-code" class="text-2xl font-mono font-bold text-gold tracking-widest"></span>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-3 text-slate-300">Players (<span id="player-count">0</span>/6)</h3>
+        <div id="player-list" class="space-y-2"></div>
+      </div>
+
+      <div class="text-center text-slate-400 text-sm mb-4">
+        Need 3-6 players to start
+      </div>
+
+      <button id="start-game-btn"
+        class="hidden w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-lg font-semibold transition transform hover:scale-105 shadow-lg">
+        Start Game
+      </button>
+    </div>
+  </div>
+
+  <!-- Game View -->
+  <div id="game-view" class="hidden min-h-screen">
+    <!-- Top Bar -->
+    <div
+      class="fixed top-0 left-0 right-0 bg-slate-900/90 backdrop-blur-md border-b border-purple-500/20 px-4 py-3 z-20">
+      <div class="flex items-center justify-between max-w-7xl mx-auto">
+        <div class="flex items-center gap-4">
+          <span class="text-purple-400 font-bold">♠ Kaali Rani</span>
+          <span id="game-phase" class="px-3 py-1 bg-purple-600/30 rounded-full text-sm"></span>
+        </div>
+        <div id="game-info" class="flex items-center gap-4 text-sm">
+          <span>Bid: <span id="current-bid" class="text-gold font-bold">-</span></span>
+          <span>Trump: <span id="trump-suit" class="font-bold">-</span></span>
+          <span>Raja: <span id="raja-name" class="text-purple-400 font-bold">-</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Game Area -->
+    <div class="pt-16 pb-48 min-h-screen flex items-center justify-center">
+      <div class="relative w-full max-w-sm aspect-square p-2">
+        <!-- Game Table -->
+        <div id="game-table"
+          class="absolute inset-2 bg-gradient-to-br from-emerald-800/50 to-emerald-900/50 rounded-full border-4 border-yellow-600/50 shadow-inner">
+          <!-- Trick Area -->
+          <div id="trick-area" class="absolute inset-0 flex items-center justify-center">
+            <div id="current-trick" class="flex flex-wrap items-center justify-center gap-1 max-w-[150px]"></div>
+          </div>
+        </div>
+
+        <!-- Other Players (positioned around the table) -->
+        <div id="other-players" class="absolute inset-0"></div>
+      </div>
+    </div>
+
+    <!-- Bidding Panel -->
+    <div id="bidding-panel"
+      class="hidden fixed bottom-32 left-1/2 -translate-x-1/2 bg-slate-800/95 backdrop-blur-md rounded-xl p-4 border border-purple-500/30 shadow-2xl z-30">
+      <div class="text-center mb-3">
+        <span class="text-sm text-slate-400">Current Bid: </span>
+        <span id="bidding-current" class="text-xl font-bold text-gold">60</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="bid-minus"
+          class="w-10 h-10 rounded-lg bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-xl font-bold transition">-</button>
+        <input type="number" id="bid-input" value="65" min="65" max="130" step="5"
+          class="w-20 text-center text-xl font-bold bg-slate-700 rounded-lg px-3 py-2 border border-slate-600">
+        <button id="bid-plus"
+          class="w-10 h-10 rounded-lg bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-xl font-bold transition">+</button>
+        <button id="place-bid-btn"
+          class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-semibold transition">Bid</button>
+        <button id="pass-bid-btn"
+          class="px-4 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg font-semibold transition">Pass</button>
+      </div>
+    </div>
+
+    <!-- Trump Selection Panel -->
+    <div id="trump-panel"
+      class="hidden fixed bottom-32 left-1/2 -translate-x-1/2 bg-slate-800/95 backdrop-blur-md rounded-xl p-4 border border-purple-500/30 shadow-2xl z-30">
+      <div class="text-center mb-3 text-purple-400 font-semibold">Select Trump Suit</div>
+      <div class="flex gap-3">
+        <button data-suit="spades"
+          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl transition hover:scale-110">♠</button>
+        <button data-suit="hearts"
+          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl text-red-500 transition hover:scale-110">♥</button>
+        <button data-suit="diamonds"
+          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl text-red-500 transition hover:scale-110">♦</button>
+        <button data-suit="clubs"
+          class="trump-btn w-16 h-16 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-3xl transition hover:scale-110">♣</button>
+      </div>
+    </div>
+
+    <!-- Partner Selection Panel -->
+    <div id="partner-panel"
+      class="hidden fixed bottom-32 left-1/2 -translate-x-1/2 bg-slate-800/95 backdrop-blur-md rounded-xl p-4 border border-purple-500/30 shadow-2xl z-30 max-w-lg">
+      <div class="text-center mb-3 text-purple-400 font-semibold">Select Partner Card</div>
+      <div class="mb-3 flex gap-2">
+        <select id="partner-suit" class="flex-1 px-3 py-2 bg-slate-700 rounded-lg border border-slate-600">
+          <option value="spades">♠ Spades</option>
+          <option value="hearts">♥ Hearts</option>
+          <option value="diamonds">♦ Diamonds</option>
+          <option value="clubs">♣ Clubs</option>
+        </select>
+        <select id="partner-rank" class="flex-1 px-3 py-2 bg-slate-700 rounded-lg border border-slate-600">
+          <option value="A">Ace</option>
+          <option value="K">King</option>
+          <option value="Q">Queen</option>
+          <option value="J">Jack</option>
+          <option value="10">10</option>
+          <option value="9">9</option>
+          <option value="8">8</option>
+          <option value="7">7</option>
+          <option value="6">6</option>
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+        </select>
+      </div>
+      <button id="select-partner-btn"
+        class="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-semibold transition">Confirm
+        Partner</button>
+    </div>
+
+    <!-- Player's Hand -->
+    <div class="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-purple-500/20 p-4 z-10">
+      <div id="my-hand" class="flex justify-center items-end gap-1 min-h-[100px] overflow-x-auto pb-2"></div>
+    </div>
+
+    <!-- Scorecard Sidebar -->
+    <div id="scorecard"
+      class="fixed right-4 top-20 bg-slate-800/90 backdrop-blur-md rounded-xl p-4 border border-purple-500/20 w-56 z-20">
+      <h3 class="font-bold text-purple-400 mb-3 text-center">Scorecard</h3>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Target:</span>
+          <span id="target-bid" class="font-bold text-gold">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Tricks:</span>
+          <span id="tricks-count" class="font-bold">0</span>
+        </div>
+        <hr class="border-slate-600">
+        <div id="partner-info" class="hidden">
+          <div class="text-purple-400 text-xs mb-1">Partner Card:</div>
+          <div id="partner-card-display" class="font-bold text-center"></div>
+        </div>
+        <hr class="border-slate-600 hidden" id="partner-divider">
+        <div class="text-purple-400 text-xs mb-1">All Points:</div>
+        <div id="all-players-points" class="space-y-1"></div>
+      </div>
+    </div>
+
+    <!-- Turn Indicator -->
+    <div id="turn-indicator"
+      class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl px-8 py-4 shadow-2xl z-40 animate-pulse">
+      <span class="text-xl font-bold">🎴 Your Turn!</span>
+    </div>
+
+    <!-- Timeout Warning -->
+    <div id="timeout-warning"
+      class="hidden fixed top-32 left-1/2 -translate-x-1/2 bg-red-600/90 backdrop-blur-md rounded-xl px-6 py-3 shadow-2xl z-50">
+      <span id="timeout-text" class="font-bold">⏰ Waiting for player...</span>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="game-over-modal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-purple-500/30 shadow-2xl">
+      <h2 id="winner-title"
+        class="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-gold to-yellow-200 bg-clip-text text-transparent">
+      </h2>
+      <div id="final-scores" class="space-y-3 mb-6"></div>
+      <button id="new-game-btn"
+        class="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-semibold transition">
+        Play Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="notification"
+    class="hidden fixed top-20 left-1/2 -translate-x-1/2 bg-slate-800/95 backdrop-blur-md rounded-xl px-6 py-3 border border-purple-500/30 shadow-2xl z-50 transition-all">
+    <span id="notification-text"></span>
+  </div>
+
+  <script src="/game.js"></script>
+</body>
+
+</html>
