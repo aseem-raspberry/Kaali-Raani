@@ -47,7 +47,7 @@ Share this URL with other players on your local network using your machine's IP 
 ## Game Rules
 
 ### Objective
-Win points by capturing high-value cards in tricks. The **Raja's team** (bidder + secret partner) must meet or exceed their bid. The team that fails loses points.
+Win points by capturing high-value cards in tricks. The **Bid winner's team** (bid winner + secret partner) must meet or exceed their bid. The team that fails loses points.
 
 ---
 
@@ -79,10 +79,10 @@ The **Raja** selects a **trump suit** (♠ ♥ ♦ ♣). Trump cards beat all ot
 
 ### Phase 3 — Partner Selection
 
-The Raja secretly names one card (e.g. *King of Hearts*). Whoever holds that card in their hand is the Raja's **secret partner** — but no one knows who it is until that card is played.
+The Raja names one card (e.g. *King of Hearts*). Whoever holds that card in their hand is the Raja's **secret partner** — but no one knows who it is until that card is played.
 
-- The Raja **cannot** select a card from their own hand.
-- The partner's identity is hidden until their designated card is played during the game.
+- While technically the Raja **can** select a card from their own hand, it is not recommended as they loses the help they could have got from extra partner.
+- The partner's identity is hidden until the designated card is played during the game.
 
 ---
 
