@@ -531,7 +531,7 @@ function getGameStateForPlayer(room, playerId) {
         roomId: room.id,
         phase: room.phase,
         myHand: player ? player.hand : [],
-        otherPlayers,
+        allPlayersInfo,
         playerOrder: room.playerOrder.map(id => ({
             id,
             name: room.players.get(id).name
