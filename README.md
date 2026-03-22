@@ -1,6 +1,6 @@
 # Kaali Raani 🃏👑
 
-**Kaali Raani** (Hindi: *काली रानी*, "Black Queen") is a real-time multiplayer trick-taking card game for 3–6 players, built with Node.js, Express, and Socket.io.
+**Kaali Raani** (Hindi: *काली रानी*, "Black Queen") is an entirely vibe coded real-time multiplayer trick-taking card game for 3–6 players, built with Node.js, Express, and Socket.io within Google Antigravity.
 
 ---
 
