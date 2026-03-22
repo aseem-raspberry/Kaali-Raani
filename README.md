@@ -39,7 +39,9 @@ Share this URL with other players on your local network using your machine's IP 
 
 1. Enter your name on the home screen.
 2. Click **Create Room** to start a new room — you'll get a 6-character room code.
-3. Share the code with friends so they can join via **Join Room**.
+3. To join an existing room, click **Join Room** and either:
+   - Select an active room directly from the **Available Rooms** dropdown.
+   - Or, manually enter the 6-character room code shared by the host.
 4. Once **3 or more players** have joined, the host clicks **Start Game**.
 
 ---
