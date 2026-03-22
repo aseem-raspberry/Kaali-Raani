@@ -58,6 +58,7 @@ const rajaNameDisplay = document.getElementById('raja-name');
 const myHandContainer = document.getElementById('my-hand');
 const trickArea = document.getElementById('current-trick');
 const otherPlayersContainer = document.getElementById('other-players');
+const myTurnGlow = document.getElementById('my-turn-glow');
 
 // Bidding elements
 const biddingPanel = document.getElementById('bidding-panel');
@@ -473,12 +474,16 @@ function handleTurnIndicator(gameState) {
 
     if (gameState.phase === 'playing' || gameState.phase === 'bidding') {
         if (state.isMyTurn) {
-            // Show turn indicator briefly
+            // Show persistent glowing table indicator
+            myTurnGlow.classList.remove('hidden');
+
+            // Show brief popup turn indicator
             turnIndicator.classList.remove('hidden');
             setTimeout(() => {
                 turnIndicator.classList.add('hidden');
             }, 2000);
         } else {
+            myTurnGlow.classList.add('hidden');
             turnIndicator.classList.add('hidden');
 
             // Start timeout timer for other player
@@ -492,6 +497,7 @@ function handleTurnIndicator(gameState) {
             }, 1000);
         }
     } else {
+        myTurnGlow.classList.add('hidden');
         turnIndicator.classList.add('hidden');
     }
 }
