@@ -472,7 +472,7 @@ function handleTurnIndicator(gameState) {
     // Reset timeout warning
     timeoutWarning.classList.add('hidden');
 
-    if (gameState.phase === 'playing' || gameState.phase === 'bidding') {
+    if (['playing', 'bidding', 'trump_selection', 'partner_selection'].includes(gameState.phase)) {
         if (state.isMyTurn) {
             // Show persistent glowing table indicator
             myTurnGlow.classList.remove('hidden');

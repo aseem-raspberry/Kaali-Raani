@@ -204,6 +204,7 @@ function passBid(room, playerId) {
     if (activeBidders.length === 1 && room.highestBidder) {
         // Last person standing with a bid wins
         room.rajaId = room.highestBidder;
+        room.currentPlayerIndex = room.playerOrder.indexOf(room.rajaId);
         room.phase = PHASES.TRUMP_SELECTION;
         return { success: true, biddingComplete: true };
     }
@@ -241,6 +242,7 @@ function advanceBiddingTurn(room) {
     const activeBidders = room.playerOrder.filter(id => !room.passedPlayers.has(id));
     if (activeBidders.length === 1 && room.highestBidder) {
         room.rajaId = room.highestBidder;
+        room.currentPlayerIndex = room.playerOrder.indexOf(room.rajaId);
         room.phase = PHASES.TRUMP_SELECTION;
     }
 }
