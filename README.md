@@ -7,6 +7,7 @@
 ## Installation & Setup
 
 ### Prerequisites
+- Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git 
 - [Node.js](https://nodejs.org/) v16 or higher
 - npm (bundled with Node.js)
 
