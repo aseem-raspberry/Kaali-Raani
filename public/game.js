@@ -303,10 +303,6 @@ socket.on('gameOver', (scores) => {
     showGameOver(scores);
 });
 
-socket.on('gameOver', (scores) => {
-    showGameOver(scores);
-});
-
 socket.on('newRoundStarted', ({ gameState, gamesPlayed, cumulativeScores }) => {
     gameOverModal.classList.add('hidden');
     updateGameState(gameState);

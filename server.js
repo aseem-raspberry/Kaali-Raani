@@ -35,7 +35,10 @@ const PHASES = {
  * Create a new room
  */
 function createRoom(hostId, hostName) {
-    const roomId = uuidv4().substring(0, 6).toUpperCase();
+    let roomId;
+    do {
+        roomId = uuidv4().substring(0, 6).toUpperCase();
+    } while (rooms.has(roomId));
 
     const room = {
         id: roomId,
@@ -301,6 +304,12 @@ function selectPartner(room, playerId, card) {
         Object.fromEntries(room.players),
         card
     );
+
+    // If no one holds the card (it was removed from the deck), reject
+    if (!room.partnerId) {
+        room.partnerCard = null;
+        return { success: false, error: 'No one holds that card — it may have been removed from the deck. Please choose a different card.' };
+    }
 
     // Start playing phase - Raja leads first
     room.phase = PHASES.PLAYING;
